@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>精品产品展示官网</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:"Microsoft Yahei",sans-serif;}
+        :root{--main:#2563eb;--dark:#1e293b;--gray:#64748b;--light:#f8fafc;}
+        /* 导航 */
+        header{background:#fff;box-shadow:0 2px 8px #eee;position:sticky;top:0;z-index:99;}
+        .nav-wrap{max-width:1200px;margin:0 auto;padding:0 20px;display:flex;justify-content:space-between;align-items:center;height:70px;}
+        /* LOGO：图片+文字并排 */
+        .logo{display:flex;align-items:center;gap:12px;}
+        .logo img{height:50px;object-fit:contain;}
+        .logo-text{font-size:24px;font-weight:bold;color:var(--main);}
+        .nav-menu a{margin:0 15px;text-decoration:none;color:var(--dark);transition:0.3s;}
+        .nav-menu a:hover{color:var(--main);}
+
+        /* ==========首页轮播图样式（新增自动轮播）========== */
+        .banner{width:100%;height:420px;overflow:hidden;position:relative;}
+        .banner-wrap{width:100%;height:100%;display:flex;transition:0.6s ease;}
+        .banner-item{width:100%;flex-shrink:0;height:420px;}
+        .banner-item img{width:100%;height:100%;object-fit:cover;}
+        /* 左右箭头 */
+        .banner-arrow{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;background:rgba(255,255,255,0.3);color:#fff;text-align:center;line-height:42px;font-size:22px;border-radius:50%;cursor:pointer;transition:0.3s;}
+        .banner-arrow:hover{background:rgba(255,255,255,0.7);color:#333;}
+        .prev{left:30px;}
+        .next{right:30px;}
+        /* 轮播圆点 */
+        .banner-dot{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:10px;}
+        .dot{width:12px;height:12px;border-radius:50%;background:#ffffff66;cursor:pointer;}
+        .dot.active{background:#fff;}
+
+        /* 通用容器 */
+        .container{max-width:1200px;margin:0 auto;padding:60px 20px;}
+        .title{text-align:center;margin-bottom:50px;}
+        .title h2{font-size:30px;color:var(--dark);margin-bottom:12px;}
+        .title span{display:inline-block;width:60px;height:3px;background:var(--main);}
+
+        /* ==========产品分类筛选样式（新增）========== */
+        .filter-box{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;margin-bottom:40px;}
+        .filter-btn{border:1px solid var(--main);padding:8px 20px;border-radius:30px;background:#fff;color:var(--main);cursor:pointer;transition:0.3s;}
+        .filter-btn.active{background:var(--main);color:#fff;}
+        .filter-btn:hover{background:#2563eb15;}
+
+        /* 产品区 */
+        .product-box{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:30px;}
+        .product-item{border:1px solid #eee;border-radius:10px;overflow:hidden;transition:0.3s;cursor:pointer;background:#fff;}
+        .product-item.hide{display:none;}
+        .product-item:hover{transform:translateY(-6px);box-shadow:0 8px 24px #e2e8f0;}
+        .pro-img{height:200px;background:#e2e8f0;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+        .pro-img img{width:100%;height:100%;object-fit:cover;}
+        .pro-info{padding:20px;}
+        .pro-info h3{margin-bottom:8px;color:var(--dark);}
+        .pro-price{color:var(--main);font-size:18px;font-weight:bold;margin:10px 0;}
+        .pro-desc{color:var(--gray);font-size:14px;line-height:1.6;}
+
+        /* 产品应用场景 */
+        .apply{background:#f7f9fc;}
+        .apply-box{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:25px;}
+        .apply-item{border-radius:8px;overflow:hidden;background:#fff;box-shadow:0 3px 12px #e6edf7;}
+        .apply-img{height:220px;overflow:hidden;}
+        .apply-img img{width:100%;height:100%;object-fit:cover;transition:0.4s;}
+        .apply-item:hover .apply-img img{transform:scale(1.06);}
+        .apply-text{padding:16px;}
+        .apply-text h4{margin-bottom:6px;color:var(--dark);}
+        .apply-text p{font-size:14px;color:var(--gray);}
+
+        /* 关于我们 */
+        .about{background:var(--light);}
+        .about-content{display:flex;gap:40px;align-items:center;flex-wrap:wrap;}
+        .about-left{flex:1;min-width:300px;height:320px;background:#e2e8f0;border-radius:8px;overflow:hidden;}
+        .about-left img{width:100%;height:100%;object-fit:cover;border-radius:8px;}
+        .about-right{flex:1;min-width:300px;}
+        .about-right p{color:var(--gray);line-height:1.8;margin-bottom:16px;}
+
+        /* 联系我们 */
+        .contact-box{display:flex;gap:40px;flex-wrap:wrap;}
+        .contact-form{flex:1;min-width:320px;}
+        .form-item{margin-bottom:18px;}
+        .form-item input,.form-item textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:6px;outline:none;font-size:15px;}
+        .form-item textarea{height:120px;resize:none;}
+        .submit{background:var(--main);color:#fff;border:none;padding:13px 30px;border-radius:6px;cursor:pointer;}
+        .contact-info{flex:1;min-width:300px;line-height:2.2;color:var(--gray);}
+
+        /* 产品弹窗 */
+        .mask{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:999;}
+        .pop{width:90%;max-width:520px;background:#fff;padding:30px;border-radius:10px;position:relative;}
+        .close{position:absolute;right:18px;top:15px;font-size:22px;cursor:pointer;color:#999;}
+        .pop-img{width:100%;height:260px;background:#eee;border-radius:6px;margin-bottom:15px;overflow:hidden;}
+        .pop-img img{width:100%;height:100%;object-fit:cover;}
+
+        /* ==========页脚二维码区域（新增双二维码）========== */
+        footer{background:var(--dark);color:#b1b5bd;padding:40px 20px;}
+        .footer-wrap{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:30px;align-items:center;margin-bottom:20px;}
+        .footer-text p{line-height:1.8;}
+        .footer-qrcode{display:flex;gap:30px;}
+        .qr-item{text-align:center;}
+        .qr-item img{width:110px;height:110px;background:#fff;padding:5px;border-radius:6px;}
+        .qr-item p{margin-top:8px;font-size:14px;}
+        .copyright{text-align:center;border-top:#333 solid 1px;padding-top:20px;}
+
+        /* 移动端适配 */
+        @media(max-width:768px){
+            .nav-menu a{margin:0 6px;font-size:13px;}
+            .banner{height:280px;}
+            .banner-item{height:280px;}
+            .footer-wrap{justify-content:center;text-align:center;}
+            .footer-qrcode{flex-wrap:wrap;justify-content:center;}
+        }
+    </style>
+</head>
+<body>
+<!-- 导航栏【Logo图片+品牌文字并存】 -->
+<header>
+    <div class="nav-wrap">
+        <div class="logo">
+            <!-- logo图片 -->
+            <img src="logo.png" alt="品牌LOGO">
+            <!-- logo旁边保留文字 -->
+            <span class="logo-text">优品科技</span>
+        </div>
+        <nav class="nav-menu">
+            <a href="#home">首页</a>
+            <a href="#product">产品中心</a>
+            <a href="#apply">应用场景</a>
+            <a href="#about">关于我们</a>
+            <a href="#contact">联系我们</a>
+        </nav>
+    </div>
+</header>
+
+<!-- 【自动轮播大图Banner】 -->
+<section class="banner" id="home">
+    <div class="banner-wrap" id="bannerWrap">
+        <div class="banner-item"><img src="banner1.jpg" alt="轮播1"></div>
+        <div class="banner-item"><img src="banner2.jpg" alt="轮播2"></div>
+        <div class="banner-item"><img src="banner3.jpg" alt="轮播3"></div>
+    </div>
+    <!-- 左右箭头 -->
+    <div class="banner-arrow prev" id="prevBtn">&lt;</div>
+    <div class="banner-arrow next" id="nextBtn">&gt;</div>
+    <!-- 底部圆点 -->
+    <div class="banner-dot" id="dotBox"></div>
+</section>
+
+<!-- 产品中心【顶部分类筛选按钮】 -->
+<section id="product" class="container">
+    <div class="title">
+        <h2>产品中心</h2>
+        <span></span>
+    </div>
+    <!-- 分类筛选按钮组 -->
+    <div class="filter-box">
+        <button class="filter-btn active" data-type="all">全部产品</button>
+        <button class="filter-btn" data-type="earphone">蓝牙耳机</button>
+        <button class="filter-btn" data-type="power">充电宝</button>
+        <button class="filter-btn" data-type="car">车载配件</button>
+        <button class="filter-btn" data-type="wireless">无线充电器</button>
+        <button class="filter-btn" data-type="line">数据线</button>
+    </div>
+    <div class="product-box" id="proList">
+        <!-- JS动态渲染产品 -->
+    </div>
+</section>
+
+<!-- 产品应用场景 -->
+<section id="apply" class="apply">
+    <div class="container">
+        <div class="title">
+            <h2>产品应用场景</h2>
+            <span></span>
+        </div>
+        <div class="apply-box" id="applyList"></div>
+    </div>
+</section>
+
+<!-- 关于我们 -->
+<section class="about" id="about">
+    <div class="container">
+        <div class="title">
+            <h2>关于我们</h2>
+            <span></span>
+        </div>
+        <div class="about-content">
+            <div class="about-left">
+                <img src="company.jpg" alt="公司厂房">
+            </div>
+            <div class="about-right">
+                <p>优品科技成立于2015年，是集研发、生产、销售于一体的现代化制造企业，厂房占地万平，拥有完善生产线与质检体系。</p>
+                <p>主营智能数码、家居配件、车载用品等产品，产品销往全国及海外30+国家，支持OEM/ODM定制，多年深耕行业，口碑保障。</p>
+                <p>始终坚持以品质为核心，客户至上，持续迭代产品，为合作伙伴提供高性价比货源。</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 联系我们 -->
+<section id="contact" class="container">
+    <div class="title">
+        <h2>联系我们</h2>
+        <span></span>
+    </div>
+    <div class="contact-box">
+        <div class="contact-form">
+            <div class="form-item"><input type="text" placeholder="您的姓名"></div>
+            <div class="form-item"><input type="tel" placeholder="联系电话"></div>
+            <div class="form-item"><textarea placeholder="留言内容"></textarea></div>
+            <button class="submit">提交留言</button>
+        </div>
+        <div class="contact-info">
+            <p>📍地址：XX省XX市高新产业园A12栋</p>
+            <p>📞电话：020-88886666</p>
+            <p>📧邮箱：service@youpin.com</p>
+            <p>⏰工作时间：周一至周六 8:30-18:00</p>
+        </div>
+    </div>
+</section>
+
+<!-- 产品详情弹窗 -->
+<div class="mask" id="popMask">
+    <div class="pop">
+        <span class="close" onclick="closePop()">×</span>
+        <div class="pop-img">
+            <img id="popImg" src="" alt="产品大图">
+        </div>
+        <h3 id="popTitle">产品名称</h3>
+        <p id="popPrice" style="color:#2563eb;font-size:18px;margin:10px 0;">价格：</p>
+        <p id="popDesc">产品详情介绍</p>
+    </div>
+</div>
+
+<!-- 页脚（双二维码：公众号+客服微信） -->
+<footer>
+    <div class="footer-wrap">
+        <div class="footer-text">
+            <p>优品科技有限公司</p>
+            <p>地址：XX高新产业园A12 | 电话：020-88886666</p>
+            <p>邮箱：service@youpin.com</p>
+        </div>
+        <div class="footer-qrcode">
+            <div class="qr-item">
+                <img src="wx-qrcode.png" alt="公众号二维码">
+                <p>关注公众号</p>
+            </div>
+            <div class="qr-item">
+                <img src="kf-qrcode.png" alt="客服微信">
+                <p>添加客服微信</p>
+            </div>
+        </div>
+    </div>
+    <div class="copyright">
+        <p>©2025 优品科技 版权所有 | 粤ICP备12345678号</p>
+    </div>
+</footer>
+
+<script>
+// 1.产品数据【新增type分类字段，用于筛选】
+const productData = [
+    {name:"智能无线蓝牙耳机",price:"99.00",desc:"高清降噪、超长续航、IPX5防水，触控操作，安卓苹果通用。",img:"pro1.jpg",type:"earphone"},
+    {name:"多功能快充充电宝",price:"129.00",desc:"20000毫安大容量，22.5W快充，数显电量，自带三线。",img:"pro2.jpg",type:"power"},
+    {name:"车载手机支架",price:"39.90",desc:"重力感应自动夹紧，出风口通用，稳固防抖不挡出风口。",img:"pro3.jpg",type:"car"},
+    {name:"桌面无线充电器",price:"59.00",desc:"15W快充兼容全机型，小巧简约，桌面办公必备。",img:"pro4.jpg",type:"wireless"},
+    {name:"高清便携蓝牙耳机",price:"75.00",desc:"半入耳轻量化设计，久戴不痛，续航24小时。",img:"pro5.jpg",type:"earphone"},
+    {name:"多功能数据线套装",price:"29.90",desc:"三合一快充线，尼龙编织耐磨，1.2米加长款。",img:"pro6.jpg",type:"line"}
+];
+
+// 2.应用场景数据
+const applyData = [
+    {img:"apply1.jpg",title:"居家日常使用",info:"卧室、客厅日常听歌充电，小巧不占地"},
+    {img:"apply2.jpg",title:"车载出行场景",info:"汽车出风口固定，导航充电两不误"},
+    {img:"apply3.jpg",title:"办公桌面搭配",info:"办公桌无线快充，整洁简约商务风"},
+    {img:"apply4.jpg",title:"户外出行携带",info:"外出随身便携，续航满足全天使用"}
+];
+
+// ==========产品渲染+筛选逻辑==========
+const proWrap = document.getElementById('proList');
+let allProDom = [];
+//渲染产品
+function renderPro(list){
+    proWrap.innerHTML = "";
+    list.forEach((item,index)=>{
+        let html = `
+        <div class="product-item" data-type="${item.type}" onclick="openPop(${index})">
+            <div class="pro-img"><img src="${item.img}" alt="${item.name}"></div>
+            <div class="pro-info">
+                <h3>${item.name}</h3>
+                <div class="pro-price">￥${item.price}</div>
+                <div class="pro-desc">${item.desc.substring(0,32)}...</div>
+            </div>
+        </div>`;
+        proWrap.innerHTML += html;
+    })
+    allProDom = document.querySelectorAll(".product-item");
+}
+renderPro(productData);
+
+//筛选按钮点击
+const filterBtns = document.querySelectorAll(".filter-btn");
+filterBtns.forEach(btn=>{
+    btn.onclick = function(){
+        filterBtns.forEach(b=>b.classList.remove("active"));
+        this.classList.add("active");
+        let type = this.getAttribute("data-type");
+        allProDom.forEach(item=>{
+            if(type == "all" || item.dataset.type == type){
+                item.classList.remove("hide");
+            }else{
+                item.classList.add("hide");
+            }
+        })
+    }
+})
+
+//渲染应用场景
+const applyWrap = document.getElementById('applyList');
+applyData.forEach(item=>{
+    applyWrap.innerHTML += `
+    <div class="apply-item">
+        <div class="apply-img"><img src="${item.img}" alt="${item.title}"></div>
+        <div class="apply-text"><h4>${item.title}</h4><p>${item.info}</p></div>
+    </div>`;
+})
+
+//弹窗
+function openPop(idx){
+    const item = productData[idx];
+    document.getElementById('popImg').src = item.img;
+    document.getElementById('popTitle').innerText = item.name;
+    document.getElementById('popPrice').innerText = `价格：￥${item.price}`;
+    document.getElementById('popDesc').innerText = item.desc;
+    document.getElementById('popMask').style.display = 'flex';
+}
+function closePop(){document.getElementById('popMask').style.display = 'none';}
+document.getElementById('popMask').addEventListener('click',e=>{if(e.target == this)closePop()})
+
+// ==========轮播图JS（自动轮播、左右切换、圆点）==========
+const bannerWrap = document.getElementById("bannerWrap");
+const prev = document.getElementById("prevBtn");
+const next = document.getElementById("nextBtn");
+const dotBox = document.getElementById("dotBox");
+const bannerNum = bannerWrap.children.length;
+let index = 0;
+let timer;
+//生成圆点
+for(let i=0;i<bannerNum;i++){
+    let d = document.createElement("div");
+    d.className = i==0?"dot active":"dot";
+    d.onclick = ()=>{index=i;changeBanner()};
+    dotBox.appendChild(d);
+}
+const dotList = dotBox.querySelectorAll(".dot");
+//切换轮播
+function changeBanner(){
+    bannerWrap.style.transform = `translateX(-${index*100}%)`;
+    dotList.forEach(d=>d.classList.remove("active"));
+    dotList[index].classList.add("active");
+}
+//自动播放
+function autoPlay(){
+    timer = setInterval(()=>{
+        index++;
+        if(index>=bannerNum)index=0;
+        changeBanner();
+    },3500)
+}
+autoPlay();
+//左右点击
+next.onclick = ()=>{index++;if(index>=bannerNum)index=0;changeBanner()}
+prev.onclick = ()=>{index--;if(index<0)index=bannerNum-1;changeBanner()}
+//鼠标悬停暂停
+document.querySelector(".banner").onmouseenter = ()=>clearInterval(timer);
+document.querySelector(".banner").onmouseleave = ()=>autoPlay();
+
+//滚动到产品
+function scrollPro(){
+    document.getElementById('product').scrollIntoView({behavior:'smooth'})
+}
+</script>
+</body>
+</html>

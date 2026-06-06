@@ -15,6 +15,36 @@
         .logo-text{font-size:24px;font-weight:bold;color:var(--main);}
         .nav-menu a{margin:0 15px;text-decoration:none;color:var(--dark);transition:0.3s;}
         .nav-menu a:hover{color:var(--main);}
+        
+        /*右上角电话号码样式*/
+        .nav-wrap{
+    max-width:1200px;
+    margin:0 auto;
+    padding:0 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    height:70px;
+    gap:20px;
+}
+.tel-box{
+    white-space:nowrap;
+}
+.tel-link{
+    font-size:20px;
+    color:#0055ee; /*主题蓝色*/
+    text-decoration:none;
+    font-weight:600;
+}
+.tel-link:hover{
+    color:#0033aa; /*悬浮深蓝*/
+}
+/*手机端隐藏电话，防止导航拥挤*/
+@media(max-width:768px){
+    .tel-box{
+        display:none;
+    }
+}
 
         /*轮播*/
         .banner{width:100%;height:1080px;overflow:hidden;position:relative;}
@@ -43,7 +73,7 @@
         .product-item{border:1px solid #eee;border-radius:10px;overflow:hidden;transition:0.3s;cursor:pointer;background:#fff;}
         .product-item.hide{display:none;}
         .product-item:hover{transform:translateY(-6px);box-shadow:0 8px 24px #e2e8f0;}
-        .pro-img{height:200px;overflow:hidden;}
+        .pro-img{height:300px;overflow:hidden;}
         .pro-img img{width:100%;height:100%;object-fit:cover;}
         .pro-info{padding:20px;}
         .pro-info h3{margin-bottom:8px;color:var(--dark);}
@@ -151,6 +181,10 @@
             <a href="#about">关于我们</a>
             <a href="#contact">联系我们</a>
         </nav>
+         <!-- 可点击拨号电话 a标签 tel: 手机点击直接唤起拨号 -->
+        <div class="tel-box">
+            <a href="tel:13800138000" class="tel-link">咨询热线：138-0013-8000</a>
+        </div>
     </div>
 </header>
 
